@@ -63,3 +63,35 @@ SO_REUSEADDR allows us to reuse the IP port address in case of a restart.
 _Should enable this option for all listen sockets_
 
 ** Step 3 : Bind to an Address
+There is a definition for a struct sockaddr_in in the header file <netinet/in.h>.
+
+It looks something like this:
+#+BEGIN_SRC cpp
+struct sockaddr_in {
+    uint16_t sin_family; // AF_INET
+    uint16_t sin_port; // port in big-endian
+    struct in_addr sin_addr; // IPv4
+};
+struct in_addr {
+    uint32_t s_addr; // IPv4 address in big-endian
+};
+#+END_SRC
+
+The port number is in big-endian, so we need to convert it using htons().
+
+The s_addr IP address is also in big-endian, so we need to convert it using htonl() [for uint32_t].
+
+** Step 4 : Listen
+This actually creates the socket. Uptil now, we were just setting up the socket.
+
+After listen, the OS handles TCP handshakes and enqueues the incoming connections.
+
+** Step 5 : Accept
+Accepting is a busy loop that tries to accept connections continuously.
+
+Need to remember to close the client's connection after we are done with it.
+
+** Step 6 : Read and Write
+Need to do something with the fd returned by accept.
+
+Read/write can be replaced with send/recv. (but these might pass extra flags)
