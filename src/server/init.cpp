@@ -70,7 +70,7 @@ int main() {
             write(conn, msg, strlen(msg));
         };
 
-        char msg[] = "hello world!";
+        char msg[] = "hello world from server!";
         respond(msg);
 
         close(conn);
