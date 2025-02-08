@@ -1,0 +1,65 @@
+#+title: Networking and Socket Programming
+#+author: Arnav Arora
+
+Primer on socket programming high level concepts [[https://build-your-own.org/redis/02_intro_sockets][here]]
+
+* TCP Server and Client
+Pseudocode for TCP Server:
+#+BEGIN_SRC python
+fd = socket()
+bind(fd, address)
+listen(fd)
+while True:
+    conn_fd = accept(fd)
+    do_something(conn_fd)
+    close(conn_fd)
+#+END_SRC
+
+This reads data from the client and sends a response back.
+
+** Step 1 : Obtain a Socket Handle
+- What is a handle?
+  - An abstract integer used to refer to things that _cross an API boundary_.
+
+#+BEGIN_SRC cpp
+#include <sys/socket.h>
+#include <stdio.h>
+
+int main() {
+        int fd = socket(AF_INET, SOCK_STREAM, 0);
+        printf("%d\n", fd);
+        return 0;
+}
+#+END_SRC
+
+#+RESULTS:
+: 3
+
+Here, AF_INET is for IPv4, SOCK_STREAM is for TCP, and 0 is useless (for our purposes).
+
+*Can use AF_INET6 for IPv6, SOCK_DGRAM for UDP.*
+
+** Step 2 : Socket Options
+Set using the socksockopt() API.
+
+#+BEGIN_SRC cpp
+#include <sys/socket.h>
+#include <stdio.h>
+
+int main() {
+        int fd = socket(AF_INET, SOCK_STREAM, 0);
+        int opt = 1;
+        setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+        printf("%d\n", fd);
+        return 0;
+}
+#+END_SRC
+
+#+RESULTS:
+: 3
+
+SO_REUSEADDR allows us to reuse the IP port address in case of a restart.
+
+_Should enable this option for all listen sockets_
+
+** Step 3 : Bind to an Address
