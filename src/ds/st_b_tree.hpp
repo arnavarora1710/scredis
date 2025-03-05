@@ -1,9 +1,13 @@
 #ifndef ST_B_TREE_H_
 #define ST_B_TREE_H_
-#pragma GCC target("avx2")
+#include <arm_neon.h>
 #include <vector>
+#include <array>
 
-typedef __m256i reg;
+typedef struct {
+    int32x4_t low;
+    int32x4_t high;
+} neon_reg;
 
 template <typename T>
 class StaticTr {
@@ -17,7 +21,7 @@ class StaticTr {
         const static int B = 16;
         std::vector< std::array<T, B> > tr;
         int n, blocks;
-        int cmp(reg x_vec, T* y_ptr);
+        int cmp(neon_reg x_vec, T* y_ptr);
 };
 
 #endif // ST_B_TREE_H_

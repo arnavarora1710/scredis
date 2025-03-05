@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  dev:
+    platform: linux/arm64  # Use ARM64 architecture for M2 Mac
+    build: .
+    volumes:
+      - .:/app
+    command: bash
+    stdin_open: true
+    tty: true

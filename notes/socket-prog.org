@@ -5,6 +5,7 @@ Primer on socket programming high level concepts [[https://build-your-own.org/re
 
 * TCP Server and Client
 Pseudocode for TCP Server:
+
 #+BEGIN_SRC python
 fd = socket()
 bind(fd, address)
