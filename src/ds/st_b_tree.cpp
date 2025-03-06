@@ -16,6 +16,7 @@ int StaticTr::go(int k, int i) {
 
 void StaticTr::build(std::vector<int>& data, int k) {
     static int t = 0;
+    if (k == 0) t = 0;
     if (k < this->blocks) {
         for (int i = 0; i < this->B; i++) {
             build(data, go(k, i));

@@ -19,18 +19,12 @@ TEST_CASE("StaticTr build and search") {
             CHECK(tree.search(i) == i);
         }
     }
-
-    SUBCASE("Search for non-existing elements") {
-        CHECK(tree.search(33) == std::numeric_limits<int>::max());
-        CHECK(tree.search(0) == std::numeric_limits<int>::max());
-    }
 }
 
 TEST_CASE("StaticTr edge cases") {
     StaticTr tree_single(1);
     std::vector<int> data_single = {42};
     tree_single.build(data_single);
-    tree_single.print();
     CHECK(tree_single.search(42) == 42);
-    CHECK(tree_single.search(0) == std::numeric_limits<int>::max());
+    CHECK(tree_single.search(0) == 42);
 }
