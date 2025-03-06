@@ -4,4 +4,4 @@
 tmp/
 *.dSYM/
 .vscode/
-.build/
+build/
