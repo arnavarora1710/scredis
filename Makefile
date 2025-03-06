@@ -18,12 +18,16 @@ DS_SRC = $(wildcard $(DS_DIR)/*.cpp)
 DS_OBJ = $(DS_SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 # Test files
-TEST_SRC = $(TEST_DIR)/script.cpp
-TEST_OBJ = $(TEST_SRC:$(TEST_DIR)/%.cpp=$(OBJ_DIR)/test/%.o)
-TEST_BIN = $(TEST_BIN_DIR)/test_runner
+TEST_BASIC = basic_tests
+TEST_CORRECTNESS = correctness_tests
+TEST_BENCHMARK = benchmark_tests
+
+TEST_SRCS = $(TEST_BASIC).cpp $(TEST_CORRECTNESS).cpp $(TEST_BENCHMARK).cpp
+TEST_BINS = $(TEST_SRCS:%.cpp=$(TEST_BIN_DIR)/%)
+TEST_OBJS = $(TEST_SRCS:%.cpp=$(OBJ_DIR)/test/%.o)
 
 # Default target
-all: dirs $(TEST_BIN)
+all: dirs $(TEST_BINS)
 
 # Create necessary directories
 dirs:
@@ -39,17 +43,35 @@ $(OBJ_DIR)/test/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(ARCH) $(INCLUDES) -c $< -o $@
 
-# Link test executable
-$(TEST_BIN): $(DS_OBJ) $(TEST_OBJ)
+# Link test executables
+$(TEST_BIN_DIR)/%: $(OBJ_DIR)/test/%.o $(DS_OBJ)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(ARCH) -o $@ $^
 
-# Run tests
-test: $(TEST_BIN)
-	@./$(TEST_BIN)
+# Test targets
+test-basic: $(TEST_BIN_DIR)/$(TEST_BASIC)
+	@echo "Running basic tests..."
+	@./$(TEST_BIN_DIR)/$(TEST_BASIC)
+
+test-correctness: $(TEST_BIN_DIR)/$(TEST_CORRECTNESS)
+	@echo "Running correctness tests..."
+	@./$(TEST_BIN_DIR)/$(TEST_CORRECTNESS)
+
+test-benchmark: $(TEST_BIN_DIR)/$(TEST_BENCHMARK)
+	@echo "Running benchmark tests..."
+	@./$(TEST_BIN_DIR)/$(TEST_BENCHMARK)
+
+# Run all tests
+test: test-basic test-correctness test-benchmark
+
+# Run small tests (basic + correctness)
+test-small: test-basic test-correctness
+
+# Run large tests (benchmark)
+test-large: test-benchmark
 
 # Clean build artifacts
 clean:
 	rm -rf $(BUILD_DIR)
 
 # Phony targets
-.PHONY: all dirs debug run clean test 
+.PHONY: all dirs test test-basic test-correctness test-benchmark test-small test-large clean 
