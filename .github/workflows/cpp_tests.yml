@@ -9,14 +9,19 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    container:
-      image: arm64v8/gcc:latest
-      options: --platform linux/arm64
 
     steps:
     - uses: actions/checkout@v3
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+      with:
+        platforms: 'arm64'
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
     - name: Build and run tests
       run: |
-        make clean
-        make test
+        docker buildx build --platform linux/arm64 -t scredis-test .
+        docker run --platform linux/arm64 scredis-test make test
