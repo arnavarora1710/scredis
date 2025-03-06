@@ -16,8 +16,8 @@ int StaticTr::go(int k, int i) {
 
 void StaticTr::build(std::vector<int>& data, int k) {
     static int t = 0;
-    if (k == 0) t = 0;
     if (k < this->blocks) {
+        if (k == 0) t = 0;
         for (int i = 0; i < this->B; i++) {
             build(data, go(k, i));
             this->tr[k][i] = (t < this->n ? data[t++] : std::numeric_limits<int>::max());
@@ -52,15 +52,15 @@ int StaticTr::cmp(neon_reg x_vec, int* y_ptr) {
     uint32x4_t mask_low = vcgtq_s32(x_vec.low, y_low);
     uint32x4_t mask_high = vcgtq_s32(x_vec.high, y_high);
     
-    int mask = 0;
-    mask |= (vgetq_lane_u32(mask_low, 0) & 1);
-    mask |= ((vgetq_lane_u32(mask_low, 1) & 1) << 1);
-    mask |= ((vgetq_lane_u32(mask_low, 2) & 1) << 2);
-    mask |= ((vgetq_lane_u32(mask_low, 3) & 1) << 3);
-    mask |= ((vgetq_lane_u32(mask_high, 0) & 1) << 4);
-    mask |= ((vgetq_lane_u32(mask_high, 1) & 1) << 5);
-    mask |= ((vgetq_lane_u32(mask_high, 2) & 1) << 6);
-    mask |= ((vgetq_lane_u32(mask_high, 3) & 1) << 7);
+    uint32_t mask = 0;
+    mask |= vgetq_lane_u32(mask_low, 0) & 1;
+    mask |= (vgetq_lane_u32(mask_low, 1) & 1) << 1;
+    mask |= (vgetq_lane_u32(mask_low, 2) & 1) << 2;
+    mask |= (vgetq_lane_u32(mask_low, 3) & 1) << 3;
+    mask |= (vgetq_lane_u32(mask_high, 0) & 1) << 4;
+    mask |= (vgetq_lane_u32(mask_high, 1) & 1) << 5;
+    mask |= (vgetq_lane_u32(mask_high, 2) & 1) << 6;
+    mask |= (vgetq_lane_u32(mask_high, 3) & 1) << 7;
     
     return mask;
 }
