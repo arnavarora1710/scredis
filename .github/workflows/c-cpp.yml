@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest-xlarge
+    runs-on: macos-15-xlarge
 
     steps:
     - uses: actions/checkout@v4
